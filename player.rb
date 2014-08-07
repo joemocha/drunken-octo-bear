@@ -53,23 +53,18 @@ class Player
   end
 
   def stats_for_team_and_year(team, year)
-    stats.select do |stat|
-      stat.teamid == team && stat.yearid == year
+    stats.select do |yearid, stat|
+      stat.teamid == team && yearid == year
     end
   end
 
   def played_for?(team, year)
-    stats.any? do |stat|
-      stat.teamid == team && stat.yearid == year
+    stats.any? do |yearid, stat|
+      stat.teamid == team && yearid == year
     end
   end
 
   def to_s
-    str = "#{namefirst} #{namelast} (#{birthyear}) <#{id}>"
-    # stats.each do |year, stat|
-      # str << stat.to_s
-    # end
-    str
+    "#{namefirst} #{namelast} (#{birthyear}) <#{id}>"
   end
-
 end

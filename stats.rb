@@ -37,14 +37,15 @@ module Stats
     def initialize(team, year)
       @year = year
       @team = team
-      players = Player.all.select{|p| p.played_for(@team, @year) }
-      @avg = players.inject do |sum, p|
-        sum + p.stats_for_year_and_team(@team, @year).first.slugging_avg
+      players = Player.all.find_all{|id, p| p.played_for?(@team, @year) }
+      @avg = players.inject(0) do |sum, (id, p)|
+        stat = p.stats_for_team_and_year(@team, @year)[@year]
+        sum + stat.slugging_avg
       end.to_f / players.size
     end
 
     def to_s
-      puts "Slugging avg for the #{@year} #{team} is #{@avg}"
+      "Slugging avg for the #{@year} #{@team} is #{@avg}"
     end
   end
 
@@ -100,6 +101,19 @@ module Stats
         end
         send method_sym
       end
+    end
+  end
+
+
+  class TripleCrownWinner
+    attr :player, :year, :league
+    def initialize(league, year)
+      @league = league
+      @year = year
+    end
+
+    def to_s
+      "The #{league} #{year} Triple Crown winner is #{player}"
     end
   end
 end
