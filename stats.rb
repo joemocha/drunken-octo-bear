@@ -64,6 +64,10 @@ module Stats
       str
     end
 
+    def eligible?
+      ab >= 200
+    end
+
     private
     def generate_stats
       set_batting_avg
@@ -106,14 +110,47 @@ module Stats
 
 
   class TripleCrownWinner
+    CRITERIA = [:rbi, :hr, :batting_avg]
     attr :player, :year, :league
     def initialize(league, year)
       @league = league
       @year = year
+      @player = "(No Winner)"
+      highest = {}
+      winners = {}
+      CRITERIA.each do |sym|
+        highest[sym] = 0
+        winners[sym] = []
+      end
+      Player.all.each do |id, p|
+        if stat = p.stats.select{|yearid, s| s.league == @league && yearid == @year }
+          next if stat == {}
+          stat = stat[@year]
+          next unless stat.eligible?
+          CRITERIA.each do |sym|
+            value = stat.send(sym)
+            if value > highest[sym]
+              winners[sym] = [p]
+              highest[sym] = value
+            elsif value == highest[sym]
+              winners[sym] << p
+              highest[sym] = value
+            end
+          end
+        end
+      end
+      select_winner(winners)
     end
 
     def to_s
       "The #{league} #{year} Triple Crown winner is #{player}"
+    end
+
+    def select_winner(hash)
+      winners_as_string = hash.values.map(&:to_s)
+      if hash.values.uniq.size == 1
+        @player = hash.values.uniq.flatten.first
+      end
     end
   end
 end

@@ -5,13 +5,12 @@ require 'pry'
 # load players
 Player.load
 puts "*" * 80
-player = Stats::MostImprovedBattingAvg.new(2009, 2010)
-puts player
+puts Stats::MostImprovedBattingAvg.new(2009, 2010)
 puts "*" * 80
-team = Stats::SluggingAvgByTeam.new("OAK", 2007)
-puts team
+puts Stats::SluggingAvgByTeam.new("OAK", 2007)
 puts "*" * 80
-puts "Triple Crown Winners for 2011 and 2012"
-puts "AL Winner: "
-puts "NL Winner: "
+puts Stats::TripleCrownWinner.new("AL", 2011)
+puts Stats::TripleCrownWinner.new("AL", 2012)
+puts Stats::TripleCrownWinner.new("NL", 2011)
+puts Stats::TripleCrownWinner.new("NL", 2012)
 puts "*" * 80
